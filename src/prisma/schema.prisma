@@ -1,0 +1,55 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum BlackListType {
+  LOGIN
+  REGISTER
+}
+
+model User {
+  id              Int      @id @default(autoincrement())
+  firstName       String   @db.VarChar(25)
+  lastName        String   @db.VarChar(25)
+  email           String   @unique
+  password        String
+  email_confirmed Boolean  @default(false)
+  created_at      DateTime @default(now())
+  updated_at      DateTime @default(now()) @updatedAt
+}
+
+model SignInRequests {
+  id         Int      @id @default(autoincrement())
+  user_agent String
+  origin     String
+  user_ip    String
+  counter    Int
+  email      String
+  expired_at DateTime
+}
+
+model SignUpRequests {
+  id         Int      @id @default(autoincrement())
+  user_agent String
+  origin     String
+  user_ip    String
+  counter    Int
+  expired_at DateTime
+}
+
+model BlackList {
+  id             Int           @id @default(autoincrement())
+  user_ip        String
+  expired_at     DateTime
+  blacklisetType BlackListType
+  user_agent     String
+  email          String?
+}
